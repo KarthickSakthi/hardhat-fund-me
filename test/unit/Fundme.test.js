@@ -15,7 +15,7 @@ describe("FundMe", async function () {
 
   describe("constructor", async function () {
     it("it sets the aggregator address correctly", async function () {
-      let response = fundMe.priceFeed();
+      let response = fundMe.getPriceFeed();
       assert.equal(response, mockV3Aggregator.address);
     });
   });
@@ -31,12 +31,12 @@ describe("FundMe", async function () {
     );
     it("updated the amount funded data structure", async function () {
       await fundMe.fund({ value: sendValue });
-      const response = await fundMe.addresstoAmountFunded(deployer.address);
+      const response = await fundMe.getAddressToAmountFunded(deployer.address);
       assert.equal(response.toString(), sendValue.toString());
     });
     it("Add funder to array of Funders", async function () {
       await fundMe.fund({ value: sendValue });
-      const funder = await fundMe.funders(0);
+      const funder = await fundMe.getFunder(0);
       assert.equal(funder, deployer);
     });
   });
@@ -67,7 +67,7 @@ describe("FundMe", async function () {
       );
     });
 
-    it("allow us to withdraw with multiple funders", async function () {
+    it("allow us to withdraw with multiple Funders", async function () {
       //Arrange
       const accounts = await ethers.getSigners();
       for (let i = 1; i < 6; i++) {
@@ -94,11 +94,11 @@ describe("FundMe", async function () {
         endingDeployerBalance.add(gasCost).toString()
       );
 
-      //Make sure that funders are reset properly
-      await expect(fundMe.funders(0)).to.be.reverted;
+      //Make sure that Funders are reset properly
+      await expect(fundMe.getFunder(0)).to.be.reverted;
       for (let i = 1; i < 6; i++) {
         assert.equal(
-          await fundMe.addresstoAmountFunded(accounts[i].address),
+          await fundMe.getAddressToAmountFunded(accounts[i].address),
           0
         );
       }
